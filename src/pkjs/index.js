@@ -1,107 +1,90 @@
+// grab weather info
 
-// constants
 var apiKey = 'a2672ea41a1a0f8685ae5e3fe009ef93';
 
-
-// make request, has callback
-function request(url, type, callback) {
+var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
-  xhr.onload = function() {
+  xhr.onload = function () {
     callback(this.responseText);
   };
   xhr.open(type, url);
   xhr.send();
+};
+
+function locationSuccess(pos) {
+  // request here
+  // construct URL
+  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
+      pos.coords.latitude + '&lon=' + pos.coords.longitude + '&appid=' + apiKey;
+
+  // send request to OpenWeatherMap
+  xhrRequest(url, 'GET', 
+    function(responseText) {
+      // responseText contains a JSON object with weather info
+      var json = JSON.parse(responseText);
+
+      // temperature in Kelvin requires adjustment
+      var temperature = Math.round(json.main.temp - 273.15);
+      console.log('Temperature is ' + temperature);
+
+      // conditions
+      var conditions = json.weather[0].main;      
+      console.log('Conditions are ' + conditions);
+       
+      // assemble dictionary using keys
+        var dictionary = {
+          'TEMPERATURE': temperature,
+          'CONDITIONS': conditions
+        };
+        
+        // send to pebble
+        Pebble.sendAppMessage(dictionary,
+          function(e) {
+            console.log('weather info sent to pebble');
+          },
+          function(e) {
+            console.log('error sending weather info to pebble');
+          }
+        );
+    }      
+  );
+  
+
+}
+
+function locationError(err) {
+  console.log('error requesting location!');
+}
+  
+function getWeather() {
+  
+  navigator.geolocation.getCurrentPosition(
+    locationSuccess,
+    locationError,
+    {timeout: 15000, maximumAge: 60000}
+  );
 }
 
 
 
-// listen for messages from watch
-Pebble.on('message', function(event) {
-  
-  // grab message that was passed
-  var message = event.data;
-  
-  // GET data
-  if (message.fetch) {
-    
-    // declare local vars
-    var weatherData;   
-    var cryptoData;
-    
-    // begin crypto
-    
-    var cryptoUrl = 'https://api.coinmarketcap.com/v1/ticker/?convert=USD&limit=20';
-    
-    // send request
-    request(cryptoUrl, 'GET', function(responseText) {
-      cryptoData = JSON.parse(responseText);
-      console.log('cryptodata', cryptoData);
-      // sent prices back to watch 
 
-    });
-    
-    
-    
-    
-    // get location
-    
-    
 
-    navigator.geolocation.getCurrentPosition(function(pos) {
-     
-      var urlWeather = 'http://api.openweathermap.org/data/2.5/weather' +
-          '?lat=' + pos.coords.latitude +
-          '&lon=' + pos.coords.longitude +
-          '&appid=' + apiKey;
-      
-      // request weather data
-      request(urlWeather, 'GET', function(responseText) {
-         weatherData = JSON.parse(responseText);
-        console.log('weather data: ', weatherData);
-        Pebble.postMessage({
-          'weather': {
-            // convert from kelvins
-            'celcius': Math.round(weatherData.main.temp - 273.15),
-            'fahrenheit': Math.round((weatherData.main.temp - 273.15) * 9/5 + 32),
-            'desc': weatherData.weather[0].main,
-          },
-          'crypto': {
-            'one_symbol': cryptoData[0].symbol,
-            'one_price': cryptoData[0].price_usd,
-            'two_symbol': cryptoData[1].symbol,
-            'two_price': cryptoData[1].price_usd,
-            'three_symbol': cryptoData[2].symbol,
-            'three_price': cryptoData[2].price_usd,
-            'four_symbol': cryptoData[3].symbol,
-            'four_price': cryptoData[3].price_usd,
-          }
-        });
-      });
-    }, function(err) {
-      console.error('error gettin location');
-    },
-    { timeout: 15000, maximumAge: 60000});
+
+
+
+// Listen for when the watchface is opened
+Pebble.addEventListener('ready', 
+  function(e) {
+    console.log('PebbleKit JS ready!');
     
-    
-    
-    // send message back
-    Pebble.postMessage({
-      'weather': {
-        // convert from kelvins
-        'celcius': Math.round(weatherData.main.temp - 273.15),
-        'fahrenheit': Math.round((weatherData.main.temp - 273.15) * 9/5 + 32),
-        'desc': weatherData.weather[0].main,
-      },
-      'crypto': {
-        'one_symbol': cryptoData[0].symbol,
-        'one_price': cryptoData[0].price_usd,
-        'two_symbol': cryptoData[1].symbol,
-        'two_price': cryptoData[1].price_usd,
-        'three_symbol': cryptoData[2].symbol,
-        'three_price': cryptoData[2].price_usd,
-        'four_symbol': cryptoData[3].symbol,
-        'four_price': cryptoData[3].price_usd,
-      }
-    });
+    getWeather();
   }
-});
+);
+
+// Listen for when an AppMessage is received
+Pebble.addEventListener('appmessage',
+  function(e) {
+    console.log('AppMessage received!');
+    getWeather();
+  }                     
+);

@@ -2,29 +2,63 @@
     "author": "bretth18@gmail.com",
     "dependencies": {},
     "keywords": [],
-    "name": "test",
+    "name": "clocko",
     "pebble": {
         "capabilities": [
-            "location",
-            "configurable"
+            "location"
         ],
-        "displayName": "test",
+        "displayName": "clocko",
         "enableMultiJS": true,
-        "messageKeys": [],
-        "projectType": "rocky",
+        "messageKeys": [
+            "CONDITIONS",
+            "TEMPERATURE"
+        ],
+        "projectType": "native",
         "resources": {
-            "media": []
+            "media": [
+                {
+                    "file": "images/bt-icon",
+                    "name": "IMAGE_BT_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/converted(1).png",
+                    "name": "IMAGE_BACKGROUND",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/perfect-dos-vga.ttf",
+                    "name": "FONT_PERFECT_DOS_20",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/perfect-dos-vga.ttf",
+                    "name": "FONT_PERFECT_DOS_14",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/perfect-dos-vga.ttf",
+                    "name": "FONT_PERFECT_DOS_48",
+                    "targetPlatforms": null,
+                    "type": "font"
+                }
+            ]
         },
         "sdkVersion": "3",
         "targetPlatforms": [
+            "aplite",
             "basalt",
             "chalk",
             "diorite",
             "emery"
         ],
-        "uuid": "1fde3b4e-99bf-4296-a374-6fa55d48763d",
+        "uuid": "23938888-54bd-4d7c-a8eb-633959466846",
         "watchapp": {
-            "watchface": true
+            "watchface": false
         }
     },
     "version": "1.0.0"
