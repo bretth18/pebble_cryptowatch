@@ -93,7 +93,7 @@ rocky.on('draw', function(event) {
   ctx.font = '42px bold numbers Leco-numbers';
   
   // generate time text
-  ctx.fillText((time.getHours() > 12 ? time.getHours() % 12 : time.getHours()) + ':' + (time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()),
+  ctx.fillText(time.getHours() + ':' + (time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()),
       bounds.width / 2, bounds.height / 2 - 28);
   
   // generate month text
