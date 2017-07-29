@@ -4,5 +4,6 @@
 * watchface for pebble watches that keeps track of crypto prices and location based weather
 * available on the pebble app store [here](https://apps.getpebble.com/applications/597a7e9b461a8dd0c0000584)
 
-# screenshot
-<img width="275" alt="screen shot 2017-07-27 at 4 56 24 pm" src="https://user-images.githubusercontent.com/955730/28696765-91477af0-72ec-11e7-9505-98439799871d.png">
+# next version (WIP)
+
+![downloadscreentime](https://user-images.githubusercontent.com/955730/28740754-baa6520a-73bd-11e7-8224-6c829e6392af.png)
