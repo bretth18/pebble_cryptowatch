@@ -11,7 +11,10 @@
         "enableMultiJS": true,
         "messageKeys": [
             "CONDITIONS",
-            "TEMPERATURE"
+            "TEMPERATURE",
+            "BTC",
+            "ETH",
+            "LTC"
         ],
         "projectType": "native",
         "resources": {
@@ -27,6 +30,12 @@
                     "name": "IMAGE_BACKGROUND",
                     "targetPlatforms": null,
                     "type": "bitmap"
+                },
+                {
+                    "file": "fonts/perfect-dos-vga.ttf",
+                    "name": "FONT_PERFECT_DOS_10",
+                    "targetPlatforms": null,
+                    "type": "font"
                 },
                 {
                     "file": "fonts/perfect-dos-vga.ttf",

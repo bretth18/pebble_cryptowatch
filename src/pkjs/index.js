@@ -13,12 +13,14 @@ var xhrRequest = function (url, type, callback) {
 
 function locationSuccess(pos) {
   // request here
+  
+  
   // construct URL
-  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
+  var urlWeather = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
       pos.coords.latitude + '&lon=' + pos.coords.longitude + '&appid=' + apiKey;
 
   // send request to OpenWeatherMap
-  xhrRequest(url, 'GET', 
+  xhrRequest(urlWeather, 'GET', 
     function(responseText) {
       // responseText contains a JSON object with weather info
       var json = JSON.parse(responseText);
@@ -66,6 +68,58 @@ function getWeather() {
 }
 
 
+function getPrice() {
+   var cryptoData;
+    
+    // begin crypto
+    
+    var cryptoUrl = 'https://api.coinmarketcap.com/v1/ticker/?convert=USD&limit=20';
+    var cryptoArray = [5];  
+  
+    // send request
+    xhrRequest(cryptoUrl, 'GET', function(responseText) {
+      cryptoData = JSON.parse(responseText);
+      console.log('cryptodata', cryptoData);
+      // sent prices back to watch 
+      
+      // sort data
+      for (var i = 0; i < cryptoData.length; i++) {
+        if (cryptoData[i].symbol == "BTC") {
+          
+          cryptoArray[0] = cryptoData[i];
+        }
+        if (cryptoData[i].symbol == "ETH") {
+          cryptoArray[1] = cryptoData[i];
+        }
+        if (cryptoData[i].symbol == "LTC") {
+          console.log('ltc checking in,', cryptoData[i].price_usd);
+          cryptoArray[2] = cryptoData[i];
+        }
+        
+      }
+      
+      var dictionary = {
+        'BTC': cryptoArray[0].price_usd,
+        'ETH': cryptoArray[1].price_usd,
+        'LTC': cryptoArray[2].price_usd
+      };
+      
+      console.log('dictionary', JSON.toString(dictionary));
+      
+      // send to pebble
+      Pebble.sendAppMessage(dictionary,
+        function(e) {
+          console.log('price info sent to pebble');
+        },
+        function(e) {
+          console.log('error sending price info to pebble');
+        }
+      );
+
+    });
+}
+
+
 
 
 
@@ -78,6 +132,7 @@ Pebble.addEventListener('ready',
     console.log('PebbleKit JS ready!');
     
     getWeather();
+    getPrice();
   }
 );
 
@@ -86,5 +141,6 @@ Pebble.addEventListener('appmessage',
   function(e) {
     console.log('AppMessage received!');
     getWeather();
+    getPrice();
   }                     
 );

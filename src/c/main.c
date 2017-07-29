@@ -1,7 +1,5 @@
 #include <pebble.h>
 
-// #define KEY_TEMPERATURE 0
-// #define KEY_CONDITIONS 1
 
 // declarations
 // static pointer to window
@@ -11,6 +9,7 @@ static Window *s_main_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_layer;
 static TextLayer *s_weather_layer;
+static TextLayer *s_price_layer;
 
 // layers
 static Layer *s_battery_layer;
@@ -19,6 +18,7 @@ static Layer *s_battery_layer;
 static GFont s_time_font;
 static GFont s_date_font;
 static GFont s_weather_font;
+static GFont s_price_font;
 
 // image pointers
 static BitmapLayer *s_background_layer, *s_bt_icon_layer;
@@ -199,6 +199,28 @@ static void main_window_load(Window *window) {
   
   
   
+  // create price Layer
+  s_price_layer = text_layer_create(
+      GRect(0, PBL_IF_ROUND_ELSE(10, 10), bounds.size.w, 30));
+  
+  // create GFont
+  s_price_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_10));
+
+  // style the text
+  text_layer_set_background_color(s_price_layer, GColorClear);
+  text_layer_set_text_color(s_price_layer, GColorWhite);
+  text_layer_set_font(s_price_layer, s_price_font);
+  text_layer_set_text_alignment(s_price_layer, GTextAlignmentRight);
+  text_layer_set_text(s_price_layer, "loading...");
+  
+  // add this as a child layer
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_price_layer));
+
+  
+  
+  
+  
+  
   // create bluetooth icon
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_ICON);
   
@@ -224,11 +246,13 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_weather_layer);
+  text_layer_destroy(s_price_layer);
   
   // unload GFont
   fonts_unload_custom_font(s_time_font);
   fonts_unload_custom_font(s_date_font);
   fonts_unload_custom_font(s_weather_font);
+  fonts_unload_custom_font(s_price_font);
   
   // destroy battery layer
   layer_destroy(s_battery_layer);
@@ -246,9 +270,18 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char conditions_buffer[32];
   static char weather_layer_buffer[32];
   
+  static char btc_buffer[20];
+  static char eth_buffer[20];
+  static char ltc_buffer[20];
+  static char price_layer_buffer[65];
+  
   // read tuples for data
   Tuple *temp_tuple = dict_find(iterator, MESSAGE_KEY_TEMPERATURE);
   Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_CONDITIONS);
+  
+  Tuple *btc_tuple = dict_find(iterator, MESSAGE_KEY_BTC);
+  Tuple *eth_tuple = dict_find(iterator, MESSAGE_KEY_ETH);
+  Tuple *ltc_tuple = dict_find(iterator, MESSAGE_KEY_LTC);
   
   // if all data is there we use it
   if (temp_tuple && conditions_tuple) {
@@ -258,6 +291,19 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // assemble string and display
     snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s,%s", temperature_buffer, conditions_buffer);
     text_layer_set_text(s_weather_layer, weather_layer_buffer);
+  }
+  
+  // price data there
+  if (btc_tuple && eth_tuple && ltc_tuple) {
+    snprintf(btc_buffer, sizeof(btc_buffer), "btc: %s", btc_tuple->value->cstring);
+    snprintf(eth_buffer, sizeof(eth_buffer), "eth: %s", eth_tuple->value->cstring);
+    snprintf(ltc_buffer, sizeof(ltc_buffer), "ltc: %s", ltc_tuple->value->cstring);
+    
+    // assemble string and display
+    snprintf(price_layer_buffer, sizeof(price_layer_buffer), "%s\n%s\n%s", btc_buffer, eth_buffer, ltc_buffer);
+    text_layer_set_text(s_price_layer, price_layer_buffer);
+    
+
   }
 }
 
