@@ -6,4 +6,12 @@
 
 # next version (WIP)
 
+additional features:
+  - [x] battery monitor 
+  - [x] disconnect alerts (vibration and visible)
+  - [ ] customizable coin tracking
+  - [ ] color on time devices
+  - [ ] weather icons 
+  
+
 ![downloadscreentime](https://user-images.githubusercontent.com/955730/28740754-baa6520a-73bd-11e7-8224-6c829e6392af.png)
