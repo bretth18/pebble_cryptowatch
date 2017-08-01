@@ -1,5 +1,5 @@
 ## pebble_cryptowatch
-![front](https://user-images.githubusercontent.com/955730/28697424-af595ad2-72f0-11e7-9a40-4974efa740e5.jpg)
+![fronfffefat](https://user-images.githubusercontent.com/955730/28810069-89e8bd8e-763c-11e7-80fe-ead14a661f0a.png)
 
 * watchface for pebble watches that keeps track of crypto prices and location based weather
 * available on the pebble app store [here](https://apps.getpebble.com/applications/597a7e9b461a8dd0c0000584)
